@@ -67,6 +67,7 @@ class clockIn():
 
                 if retries == 4:
                     self.fail = True
+                    logger.error("健康打卡失败")
 
         self.driver.quit()
         self.notify()
@@ -172,9 +173,10 @@ class clockIn():
         )
 
         if message == '打卡成功':
-            logger.info("打卡成功")
+            logger.info("健康打卡成功")
         else:
             logger.error(f"弹出框消息不正确，为:{message}")
+            logger.error("健康打卡失败")
             self.fail = True
 
     def notify(self):
@@ -186,10 +188,10 @@ class clockIn():
         else:
             if self.fail:
                 title = content = "健康打卡失败"
+                logger.info("推送打卡失败的消息")
             else:
                 title = content = "健康打卡成功"
-
-            logger.info("推送打卡成功与否的消息")
+                logger.info("推送打卡成功的消息")
 
         if self.pushplus:
             data = {"token": self.pushplus, "title": title, "content": content}
