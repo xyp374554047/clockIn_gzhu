@@ -182,16 +182,16 @@ class clockIn():
     def notify(self):
         if not self.pushplus:
             if self.fail:
-                sys.exit("打卡失败")
+                sys.exit("健康打卡失败")
             else:
                 sys.exit()
         else:
             if self.fail:
                 title = content = "健康打卡失败"
-                logger.info("推送打卡失败的消息")
+                logger.info("推送健康打卡失败的消息")
             else:
                 title = content = "健康打卡成功"
-                logger.info("推送打卡成功的消息")
+                logger.info("推送健康打卡成功的消息")
 
         if self.pushplus:
             data = {"token": self.pushplus, "title": title, "content": content}
