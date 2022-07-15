@@ -64,8 +64,11 @@ class clockIn():
             except Exception:
                 logger.error(traceback.format_exc())
                 try:
-                    logger.error(
-                        f'第{retries+1}次运行失败，当前页面标题为：{self.driver.title}')
+                    if not self.driver.title:
+                        logger.error(f'第{retries+1}次运行失败，当前页面标题为空')
+                    else:
+                        logger.error(
+                            f'第{retries+1}次运行失败，当前页面标题为：{self.driver.title}')
                 except Exception:
                     logger.error(f'第{retries+1}次运行失败，获取当前页面标题失败')
 
