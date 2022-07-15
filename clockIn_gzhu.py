@@ -80,10 +80,8 @@ class clockIn():
         self.notify()
 
     def check(self):
-        WebDriverWait(self.driver, 5).until(
+        WebDriverWait(self.driver, 60).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
-        if not self.driver.title:
-            raise Exception("当前页面标题为空")
 
     def refresh(self):
         refresh_times = 0
@@ -93,9 +91,7 @@ class clockIn():
             self.driver.refresh()
 
             try:
-                WebDriverWait(self.driver, 5).until(
-                    EC.presence_of_all_elements_located(
-                        (By.TAG_NAME, "title")))
+                self.check()
             except Exception:
                 pass
 
