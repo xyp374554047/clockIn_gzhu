@@ -80,7 +80,7 @@ class clockIn():
         self.notify()
 
     def wait_for_title(self):
-        WebDriverWait(self.driver, 3).until(
+        WebDriverWait(self.driver, 4).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
 
     def refresh(self):
