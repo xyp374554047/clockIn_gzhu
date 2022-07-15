@@ -29,7 +29,7 @@ class clockIn():
         for option in optionsList:
             options.add_argument(option)
 
-        options.page_load_strategy = 'eager'
+        options.page_load_strategy = 'none'
         options.add_experimental_option(
             "excludeSwitches",
             ["ignore-certificate-errors", "enable-automation"])
@@ -80,6 +80,8 @@ class clockIn():
         self.notify()
 
     def check(self):
+        WebDriverWait(self.driver, 5).until(
+            EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
         if not self.driver.title:
             raise Exception("当前页面标题为空")
 
@@ -89,6 +91,13 @@ class clockIn():
         while True:
             logger.info('刷新页面')
             self.driver.refresh()
+
+            try:
+                WebDriverWait(self.driver, 5).until(
+                    EC.presence_of_all_elements_located(
+                        (By.TAG_NAME, "title")))
+            except Exception:
+                pass
 
             title = self.driver.title
             if title == '融合门户':
@@ -132,6 +141,7 @@ class clockIn():
             self.driver.execute_script(script)
 
     def step2(self):
+        self.wdwait.until(EC.title_contains("融合门户"))
         logger.info('正在转到学生健康状况申报页面')
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
@@ -157,7 +167,6 @@ class clockIn():
         ]:
             self.driver.find_element(By.XPATH, xpath).click()
 
-        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH,
@@ -177,7 +186,6 @@ class clockIn():
         self.driver.find_element(By.XPATH,
                                  "//nobr[contains(text(), '提交')]/..").click()
 
-        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[@class='dialog_button default fr']")))
