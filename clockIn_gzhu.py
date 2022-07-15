@@ -132,11 +132,6 @@ class clockIn():
             self.driver.execute_script(script)
 
     def step2(self):
-        self.check()
-        self.wdwait.until(
-            EC.visibility_of_element_located(
-                (By.XPATH, '//a[@title="健康打卡"]/img')))
-
         logger.info('正在转到学生健康状况申报页面')
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
