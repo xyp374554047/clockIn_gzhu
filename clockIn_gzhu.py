@@ -78,7 +78,7 @@ class clockIn():
 
     def check(self):
         if not self.driver.title:
-            raise Exception("当前页面无标题")
+            raise Exception("当前页面标题为空")
 
     def refresh(self):
         refresh_times = 0
@@ -94,12 +94,14 @@ class clockIn():
                 self.page = 2
             elif title in ['填报健康信息 - 学生健康状况申报', '表单填写与审批::加载中']:
                 self.page = 3
-            elif title == "":
-                logger.info('当前页面标题为：')
+            elif not title:
+                logger.info('当前页面标题为空')
 
                 refresh_times += 1
                 if refresh_times < 4:
                     continue
+                else:
+                    raise Exception("页面刷新次数达到上限")
             else:
                 self.page = 0
 
