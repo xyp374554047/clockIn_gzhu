@@ -79,8 +79,8 @@ class clockIn():
         self.driver.quit()
         self.notify()
 
-    def check(self):
-        WebDriverWait(self.driver, 60).until(
+    def wait_for_title(self):
+        WebDriverWait(self.driver, 3).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
 
     def refresh(self):
@@ -91,7 +91,7 @@ class clockIn():
             self.driver.refresh()
 
             try:
-                self.check()
+                self.wait_for_title()
             except Exception:
                 pass
 
@@ -123,7 +123,7 @@ class clockIn():
             'https://newcas.gzhu.edu.cn/cas/login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup'
         )
 
-        self.check()
+        self.wait_for_title()
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//div[@class='robot-mag-win small-big-small']")))
@@ -142,7 +142,7 @@ class clockIn():
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
     def step3(self):
-        self.check()
+        self.wait_for_title()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.ID, "preview_start_button"))).click()
@@ -150,7 +150,7 @@ class clockIn():
         logger.info('正在转到填报健康信息 - 学生健康状况申报页面')
 
     def step4(self):
-        self.check()
+        self.wait_for_title()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//div[@align='right']/input[@type='checkbox']")))
