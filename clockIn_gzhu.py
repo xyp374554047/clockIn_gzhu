@@ -76,6 +76,10 @@ class clockIn():
         self.driver.quit()
         self.notify()
 
+    def check(self):
+        if not self.driver.title:
+            raise Exception("当前页面无标题")
+
     def refresh(self):
         refresh_times = 0
 
@@ -109,6 +113,7 @@ class clockIn():
             'https://newcas.gzhu.edu.cn/cas/login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup'
         )
 
+        self.check()
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//div[@class='robot-mag-win small-big-small']")))
@@ -122,6 +127,7 @@ class clockIn():
             self.driver.execute_script(script)
 
     def step2(self):
+        self.check()
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, '//a[@title="健康打卡"]/img')))
@@ -130,6 +136,7 @@ class clockIn():
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
     def step3(self):
+        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.ID, "preview_start_button"))).click()
@@ -137,6 +144,7 @@ class clockIn():
         logger.info('正在转到填报健康信息 - 学生健康状况申报页面')
 
     def step4(self):
+        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//div[@align='right']/input[@type='checkbox']")))
@@ -149,6 +157,7 @@ class clockIn():
         ]:
             self.driver.find_element(By.XPATH, xpath).click()
 
+        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH,
@@ -168,6 +177,7 @@ class clockIn():
         self.driver.find_element(By.XPATH,
                                  "//nobr[contains(text(), '提交')]/..").click()
 
+        self.check()
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//button[@class='dialog_button default fr']")))
