@@ -37,9 +37,10 @@ class clockIn():
         self.driver = selenium.webdriver.Chrome(options=options)
         self.wdwait = WebDriverWait(self.driver, 30)
 
-        # self.page用来表示当前页面
-        # 0表示初始页面，Unified Identity Authentication页面，统一身份认证页面和其它页面
+        # self.page用来表示当前页面标题，0表示初始页面
         self.page = 0
+
+        # self.fail表示打卡失败与否
         self.fail = False
 
     def __call__(self):
@@ -50,15 +51,18 @@ class clockIn():
                     self.refresh()
 
                 if self.page == 0:
-                    self.step1()
+                    self.step0()
 
                 if self.page in [0, 1]:
-                    self.step2()
+                    self.step1()
 
                 if self.page in [0, 1, 2]:
-                    self.step3()
+                    self.step2()
 
                 if self.page in [0, 1, 2, 3]:
+                    self.step3()
+
+                if self.page in [0, 1, 2, 3, 4]:
                     self.step4()
                     break
             except Exception:
@@ -80,10 +84,17 @@ class clockIn():
         self.notify()
 
     def wait_for_title(self):
+        """等待title加载
+        """
         WebDriverWait(self.driver, 4).until(
             EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
 
     def refresh(self):
+        """刷新页面，直到页面标题不为空
+
+        Raises:
+            Exception: 页面刷新次数达到上限
+        """
         refresh_times = 0
 
         while True:
@@ -96,12 +107,16 @@ class clockIn():
                 pass
 
             title = self.driver.title
-            if title == '融合门户':
+
+            # Unified Identity Authentication也就是统一身份认证界面
+            if title == 'Unified Identity Authentication':
                 self.page = 1
-            elif title == '学生健康状况申报':
+            elif title == '融合门户':
                 self.page = 2
-            elif title in ['填报健康信息 - 学生健康状况申报', '表单填写与审批::加载中']:
+            elif title == '学生健康状况申报':
                 self.page = 3
+            elif title in ['填报健康信息 - 学生健康状况申报', '表单填写与审批::加载中']:
+                self.page = 4
             elif not title:
                 logger.info('当前页面标题为空')
 
@@ -117,12 +132,17 @@ class clockIn():
 
         logger.info(f'当前页面标题为：{title}')
 
-    def step1(self):
+    def step0(self):
+        """转到统一身份认证界面
+        """
         logger.info('正在转到统一身份认证页面')
         self.driver.get(
             'https://newcas.gzhu.edu.cn/cas/login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup'
         )
 
+    def step1(self):
+        """登录融合门户
+        """
         self.wait_for_title()
         self.wdwait.until(
             EC.visibility_of_element_located(
@@ -137,11 +157,15 @@ class clockIn():
             self.driver.execute_script(script)
 
     def step2(self):
+        """转到学生健康状况申报页面
+        """
         self.wdwait.until(EC.title_contains("融合门户"))
         logger.info('正在转到学生健康状况申报页面')
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
     def step3(self):
+        """转到填报健康信息 - 学生健康状况申报页面
+        """
         self.wait_for_title()
         self.wdwait.until(
             EC.element_to_be_clickable(
@@ -150,6 +174,8 @@ class clockIn():
         logger.info('正在转到填报健康信息 - 学生健康状况申报页面')
 
     def step4(self):
+        """填写并提交表单
+        """
         self.wait_for_title()
         self.wdwait.until(
             EC.element_to_be_clickable(
@@ -198,6 +224,8 @@ class clockIn():
             self.fail = True
 
     def notify(self):
+        """通知健康打卡成功与失败
+        """
         if not self.pushplus:
             if self.fail:
                 sys.exit("健康打卡失败")
