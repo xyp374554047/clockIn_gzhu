@@ -36,6 +36,7 @@ class clockIn():
 
         self.driver = selenium.webdriver.Chrome(options=options)
         self.wdwait = WebDriverWait(self.driver, 30)
+        self.titlewait = WebDriverWait(self.driver, 4)
 
         # self.page用来表示当前页面标题，0表示初始页面
         self.page = 0
@@ -83,12 +84,6 @@ class clockIn():
         self.driver.quit()
         self.notify()
 
-    def wait_for_title(self):
-        """等待title加载
-        """
-        WebDriverWait(self.driver, 4).until(
-            EC.presence_of_all_elements_located((By.TAG_NAME, "title")))
-
     def refresh(self):
         """刷新页面，直到页面标题不为空
 
@@ -102,7 +97,9 @@ class clockIn():
             self.driver.refresh()
 
             try:
-                self.wait_for_title()
+                self.titlewait.until(
+                    EC.presence_of_all_elements_located(
+                        (By.TAG_NAME, "title")))
             except Exception:
                 pass
 
@@ -143,7 +140,8 @@ class clockIn():
     def step1(self):
         """登录融合门户
         """
-        self.wait_for_title()
+        self.titlewait.until(
+            EC.title_contains("Unified Identity Authentication"))
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//div[@class='robot-mag-win small-big-small']")))
@@ -159,14 +157,14 @@ class clockIn():
     def step2(self):
         """转到学生健康状况申报页面
         """
-        self.wdwait.until(EC.title_contains("融合门户"))
+        self.titlewait.until(EC.title_contains("融合门户"))
         logger.info('正在转到学生健康状况申报页面')
         self.driver.get('https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start')
 
     def step3(self):
         """转到填报健康信息 - 学生健康状况申报页面
         """
-        self.wait_for_title()
+        self.titlewait.until(EC.title_contains("学生健康状况申报"))
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.ID, "preview_start_button"))).click()
@@ -176,7 +174,7 @@ class clockIn():
     def step4(self):
         """填写并提交表单
         """
-        self.wait_for_title()
+        self.titlewait.until(EC.title_contains("表单填写与审批::加载中"))
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//div[@align='right']/input[@type='checkbox']")))
