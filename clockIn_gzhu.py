@@ -207,8 +207,8 @@ class clockIn():
                                  "//nobr[contains(text(), '提交')]/..").click()
 
         self.wdwait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[@class='dialog_button default fr']")))
+            EC.visibility_of_element_located(
+                (By.XPATH, "//div[@class='form_do_action_error']")))
 
         message = self.driver.execute_script(
             "return document.getElementsByClassName('form_do_action_error')[0]['textContent']"
