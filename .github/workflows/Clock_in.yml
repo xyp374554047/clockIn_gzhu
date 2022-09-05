@@ -2,7 +2,7 @@ name: Clock_in
 
 on:
   schedule:
-    - cron: '33 23 * * *'
+    - cron: '35 15 * * *'
   workflow_dispatch:
 
 jobs:
